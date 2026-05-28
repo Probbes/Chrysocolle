@@ -1,0 +1,11 @@
+[application]
+name = "Chrysocolle"
+
+[bundle]
+identifier = "com.Probbes.app"
+publisher = "Probbes"
+category = "Utility"
+short_description = "An emulator manager that sync save files with a git repo"
+icon = ["assets/icon.ico", "assets/Chrysocolle.png"]
+
+[desktop]
