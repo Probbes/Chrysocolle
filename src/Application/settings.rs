@@ -81,8 +81,12 @@ impl Emulator {
     }
     pub fn get_fullscreen(&self) -> &bool {
         match self {
-            Emulator::RetroArch { default_fullscreen, .. } => default_fullscreen,
-            Emulator::Other { default_fullscreen, .. } => default_fullscreen,
+            Emulator::RetroArch {
+                default_fullscreen, ..
+            } => default_fullscreen,
+            Emulator::Other {
+                default_fullscreen, ..
+            } => default_fullscreen,
             Emulator::New(..) => &false,
         }
     }
@@ -122,8 +126,12 @@ impl Emulator {
     }
     pub fn set_fullscreen(&mut self, b: bool) {
         match self {
-            Emulator::RetroArch { default_fullscreen, .. } => *default_fullscreen = b,
-            Emulator::Other { default_fullscreen, .. } => *default_fullscreen = b,
+            Emulator::RetroArch {
+                default_fullscreen, ..
+            } => *default_fullscreen = b,
+            Emulator::Other {
+                default_fullscreen, ..
+            } => *default_fullscreen = b,
             _ => {}
         }
     }
@@ -171,9 +179,6 @@ impl EmuGit {
     }
     pub fn get_save_dir(&self) -> &HashMap<String, PathBuf> {
         &self.save_dir
-    }
-    pub fn set_save_dir(&mut self, hash: HashMap<String, PathBuf>) {
-        self.save_dir = hash;
     }
     pub fn add_save_dir(&mut self, k: String, v: PathBuf) {
         self.save_dir.insert(k, v);

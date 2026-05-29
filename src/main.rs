@@ -1,9 +1,9 @@
 //#![windows_subsystem = "windows"]
 
 use dioxus::prelude::*;
-use dioxus_desktop::{Config, WindowBuilder, tao::window::Icon};
+use dioxus_desktop::{Config, WindowBuilder};
 use rfd::{MessageButtons, MessageDialog, MessageDialogResult, MessageLevel};
-use std::{fs::File, io::BufReader, path::Path};
+use std::path::Path;
 
 const MAIN_CSS: &str = include_str!("../assets/styling/main.css");
 const TAILWIND_CSS: &str = include_str!("../assets/tailwind.css");
@@ -51,7 +51,7 @@ fn App() -> Element {
         if !settings.peek().project_folder.is_dir() {
             show_folder_warning.set(true);
         } else {
-            //gitutils::git_pull(&*settings.peek());
+            gitutils::git_pull(&*settings.peek());
             apputils::get_games(&mut *settings.write());
             apputils::get_save_path(&mut *settings.write());
         }

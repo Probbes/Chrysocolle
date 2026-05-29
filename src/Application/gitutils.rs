@@ -1,7 +1,6 @@
 use dioxus::{CapturedError, prelude::*};
 use rfd::MessageDialog;
 use std::fs::DirBuilder;
-use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -59,13 +58,25 @@ pub fn git_push(settings: &EmuSettings) {
         .expect("failed");
     println!("{output:?}");
 
-    let output = Command::new("git").args(["push"]).current_dir(repo_path).output().expect("failed");
+    let output = Command::new("git")
+        .args(["push"])
+        .current_dir(repo_path)
+        .output()
+        .expect("failed");
     println!("{output:?}");
 }
 
 //Add repository save files to the emulator
-pub fn add_repo_to_emu(settings: &EmuSettings, emulator_name: &String) -> Result<(), CapturedError> {
-    let git_path = settings.emulators.get(emulator_name).unwrap_or(&Emulator::default()).get_git_path();
+pub fn add_repo_to_emu(
+    settings: &EmuSettings,
+    emulator_name: &String,
+) -> Result<(), CapturedError> {
+    println!("add repo to emu");
+    let git_path = settings
+        .emulators
+        .get(emulator_name)
+        .unwrap_or(&Emulator::default())
+        .get_git_path();
 
     match DirBuilder::new().create(&git_path) {
         Ok(()) => println!("Folder doesn't exists, creating..."),
@@ -83,26 +94,33 @@ pub fn add_repo_to_emu(settings: &EmuSettings, emulator_name: &String) -> Result
     println!("{:?}", emulator_save_path);
     if let Some(dest_parent) = emulator_save_path.parent() {
         if let Some(source_name) = emulator_save_path.file_name() {
-            println!("overwrite_folder({:?} - {:?})", &git_path.join(source_name), dest_parent);
+            println!(
+                "overwrite_folder({:?} - {:?})",
+                &git_path.join(source_name),
+                dest_parent
+            );
             apputils::overwrite_folder(&git_path.join(source_name), dest_parent)?;
             Ok(())
         } else {
-            return Err(CapturedError::msg("Error occured while getting the final component of path"));
+            return Err(CapturedError::msg(
+                "Error occured while getting the final component of path",
+            ));
         }
     } else {
-        return Err(CapturedError::msg("Error occured while getting the parent of the directory"));
+        return Err(CapturedError::msg(
+            "Error occured while getting the parent of the directory",
+        ));
     }
 }
 
 //Add emulators saves files to repository files to be pushed
 pub fn add_emu_to_repo(settings: &EmuSettings) -> Result<(), CapturedError> {
+    println!("add emu to repo");
     let emulators = settings.emulators.clone();
 
-    for (key, val) in emulators {
+    for (_key, val) in emulators {
         //Example : C:/Users/Probb/Desktop/test/repo/key
-        let git_path = Path::new(settings.git.get_directory())
-            .join(settings.git.get_repo_name())
-            .join(&key);
+        let git_path = val.get_git_path();
 
         match DirBuilder::new().create(&git_path) {
             Ok(()) => println!("Folder doesn't exists, creating..."),
@@ -110,7 +128,11 @@ pub fn add_emu_to_repo(settings: &EmuSettings) -> Result<(), CapturedError> {
         }
 
         let destination = val.get_save_path();
-        println!("overwrite_folder({:?} - {:?})", &destination.to_path_buf(), &git_path);
+        println!(
+            "overwrite_folder({:?} - {:?})",
+            &destination.to_path_buf(),
+            &git_path
+        );
         apputils::overwrite_folder(&destination.to_path_buf(), &git_path)?
     }
 
